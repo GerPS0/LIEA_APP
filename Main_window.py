@@ -1,12 +1,15 @@
 from operator import inv
 import sys
+from tkinter import Spinbox
+from webbrowser import get
 
 from PySide6.QtGui import QAction
+from PySide6.QtCore import Qt, Signal
 from PySide6.QtWidgets import (QAbstractItemView, QApplication,
-    QCheckBox, QComboBox, QFileDialog, QDialog, QDialogButtonBox, QGridLayout,
+    QCheckBox, QComboBox, QFileDialog, QDialog, QWidget, QDialogButtonBox, QGridLayout,
     QGroupBox, QHeaderView, QInputDialog, QItemDelegate, QLabel, QLineEdit,
     QMainWindow, QMessageBox, QStyle, QSpinBox, QStyleOptionViewItem,
-    QTableWidget, QTableWidgetItem, QTreeWidget, QTreeWidgetItem, QVBoxLayout,QPushButton)
+    QTableWidget, QTableWidgetItem, QTreeWidget, QTreeWidgetItem, QVBoxLayout,QPushButton,QAbstractButton)
 from pip import main
 
 
@@ -33,7 +36,7 @@ class MainWindow(QMainWindow):
                 self, shortcut = "Ctrl+N",triggered=self.NewDesign)
         self.load_fraccional_controller = QAction("&Load controller",self,
                 shortcut = "Ctrl+P")
-        self.exit_action = self.exit_action = QAction("E&xit", self, shortcut="Ctrl+Q",
+        self.exit_action = self.exit_action = QAction("E&xit", self, shortcut="Ctrl+X",
                 triggered=self.close)
 
         self.about_action = QAction("&About", self)
@@ -56,46 +59,53 @@ class DesignDialog(QDialog):
         self.Convert_combo = QComboBox()
         self.Convert_combo.addItem("Buck")
         self.Convert_combo.addItem("Boost")
-        convert_label = QLabel("&Conveter Type:")
+        convert_label = QLabel("Conveter Type:")
         convert_label.setBuddy(self.Convert_combo)
         
-        self.InputVoltage_combo = QComboBox()
-        self.InputVoltage_combo.addItem("0")
-        self.InputVoltage_combo.setEditable(True)
-        InV_label = QLabel("&Input voltage:")
+        self.InputVoltage_combo = QSpinBox()
+        self.InputVoltage_combo.setValue(0)
+        InV_label = QLabel("Input voltage:")
         InV_label.setBuddy(self.InputVoltage_combo)
 
-        self.OutputVoltage_combo = QComboBox()
-        self.OutputVoltage_combo.addItem("0")
-        self.OutputVoltage_combo.setEditable(True)
-        OuTV_label = QLabel("&Output voltage Type:")
+        self.OutputVoltage_combo = QSpinBox()
+        self.OutputVoltage_combo.setValue(0)
+        OuTV_label = QLabel("Output voltage:")
         OuTV_label.setBuddy(self.OutputVoltage_combo)
 
-        self.Apply_button = QPushButton("&Apply")
-        self.Exit_button = QPushButton("&Exit")
+        self.Apply_button = QPushButton("Apply")
+        self.Apply_button.clicked.connect(self.ApplyValues)
+        self.Exit_button = QPushButton("Exit")
+        self.Exit_button.clicked.connect(self.close)
+        
 
         main_layout = QGridLayout(self)
         main_layout.addWidget(convert_label, 0,0)
-        main_layout.addWidget(self.Convert_combo, 0,1)
         main_layout.addWidget(InV_label,1,0)
         main_layout.addWidget(OuTV_label,2,0)
+        main_layout.addWidget(self.Convert_combo, 0,1)
         main_layout.addWidget(self.InputVoltage_combo,1,1)
         main_layout.addWidget(self.OutputVoltage_combo,2,1)
 
         main_layout.addWidget(self.Apply_button,5,0)
         main_layout.addWidget(self.Exit_button,5,1)
 
+        
+
         self.setWindowTitle("Controller design")
         self.resize(640,480)
 
+    def ApplyValues(self):
+        Convert = self.Convert_combo.currentText()
+        Vin = self.InputVoltage_combo.value()
+        Vout = self.OutputVoltage_combo.value()
+        
+        self.SaveAlert = QMessageBox()
+        self.SaveAlert.setText("Values of converter has been saved...")
+        self.SaveAlert.setDetailedText("Input voltge: " + str(Vin) + " V\n" +
+                                        "Output Voltage: " + str(Vout) + " V\n" +
+                                        "Type of converter: " + str(Convert))
+        self.SaveAlert.exec()
     
-
-
-
-
-
-
-
 
 if __name__ == '__main__':
     app = QApplication(sys.argv)
