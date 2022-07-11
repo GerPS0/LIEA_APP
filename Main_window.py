@@ -72,6 +72,11 @@ class DesignDialog(QDialog):
         OuTV_label = QLabel("Output voltage:")
         OuTV_label.setBuddy(self.OutputVoltage_combo)
 
+        self.Power_val = QSpinBox()
+        self.Power_val.setValue(0)
+        Power_label = QLabel("Output power:")
+        Power_label.setBuddy(self.Power_val)
+
         self.Apply_button = QPushButton("Apply")
         self.Apply_button.clicked.connect(self.ApplyValues)
         self.Exit_button = QPushButton("Exit")
@@ -82,9 +87,13 @@ class DesignDialog(QDialog):
         main_layout.addWidget(convert_label, 0,0)
         main_layout.addWidget(InV_label,1,0)
         main_layout.addWidget(OuTV_label,2,0)
+        main_layout.addWidget(Power_label,3,0)
+        
+
         main_layout.addWidget(self.Convert_combo, 0,1)
         main_layout.addWidget(self.InputVoltage_combo,1,1)
         main_layout.addWidget(self.OutputVoltage_combo,2,1)
+        main_layout.addWidget(self.Power_val,3,1)
 
         main_layout.addWidget(self.Apply_button,5,0)
         main_layout.addWidget(self.Exit_button,5,1)
